@@ -77,10 +77,11 @@ int main(void)
     enum Scene { TESSERACT, PLACEHOLDER, COLORED_FACES };
     Scene currentScene = TESSERACT;
 
-    // Colors for tesseract faces
-    const Color faceColors[8] = {
-        RED, GREEN, BLUE, YELLOW, 
-        ORANGE, PURPLE, SKYBLUE, PINK
+    // Colors for tesseract faces (24 colors)
+    const Color faceColors[24] = {
+        RED, GREEN, BLUE, YELLOW, ORANGE, PURPLE, SKYBLUE, PINK,
+        LIME, GOLD, VIOLET, BROWN, BEIGE, MAGENTA, MAROON, DARKGREEN,
+        DARKBLUE, DARKPURPLE, DARKBROWN, DARKGRAY, LIGHTGRAY, RAYWHITE, GRAY, WHITE
     };
 
     // Rotation angles for 4D
@@ -146,15 +147,29 @@ int main(void)
                     auto projectedVertices = projectTesseract(tesseractVertices, 
                         angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
                     
-                    // Define cube faces (using the first 8 vertices)
-                    int faces[6][4] = {
+                    // Define all 24 square faces of the tesseract
+                    int faces[24][4] = {
+                        // Inner cube
                         {0, 1, 3, 2}, {4, 5, 7, 6}, 
                         {0, 1, 5, 4}, {2, 3, 7, 6},
-                        {0, 2, 6, 4}, {1, 3, 7, 5}
+                        {0, 2, 6, 4}, {1, 3, 7, 5},
+                        
+                        // Outer cube
+                        {8, 9, 11, 10}, {12, 13, 15, 14},
+                        {8, 9, 13, 12}, {10, 11, 15, 14},
+                        {8, 10, 14, 12}, {9, 11, 15, 13},
+                        
+                        // Connecting faces between inner and outer cubes
+                        {0, 1, 9, 8}, {1, 3, 11, 9},
+                        {2, 3, 11, 10}, {0, 2, 10, 8},
+                        {4, 5, 13, 12}, {5, 7, 15, 13},
+                        {6, 7, 15, 14}, {4, 6, 14, 12},
+                        {0, 4, 12, 8}, {1, 5, 13, 9},
+                        {2, 6, 14, 10}, {3, 7, 15, 11}
                     };
                     
                     // Draw each face with a different color
-                    for (int i = 0; i < 6; i++) {
+                    for (int i = 0; i < 24; i++) {
                         Vector3 v1 = projectedVertices[faces[i][0]];
                         Vector3 v2 = projectedVertices[faces[i][1]];
                         Vector3 v3 = projectedVertices[faces[i][2]];
