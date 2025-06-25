@@ -11,7 +11,7 @@ int main(void)
 
     // Define the camera to look into our 3d world
     Camera3D camera = { 0 };
-    camera.position = (Vector3){ 0.0f, 10.0f, 10.0f }; // Camera position
+    camera.position = (Vector3){ 10.0f, 10.0f, 10.0f }; // Camera position
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };    // Camera looking at point
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };        // Camera up vector
     camera.fovy = 45.0f;                              // Camera field-of-view Y
@@ -30,20 +30,25 @@ int main(void)
             ClearBackground(RAYWHITE);
 
             BeginMode3D(camera);
-                // Set line width and draw cube
+                // Set line width and draw cubes
                 static float rotation = 0.0f;
                 rotation += 0.5f;
                 
-                rlDisableBackfaceCulling(); // Needed for thicker lines
-                rlSetLineWidth(10.0f); // Much thicker lines
-                
+                // Thick red cube
+                rlDisableBackfaceCulling();
+                rlSetLineWidth(20.0f); // Very thick lines
                 rlPushMatrix();
-                    rlRotatef(rotation, 1.0f, 1.0f, 1.0f); // Rotate the cube
-                    DrawCubeWires((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, RED);
+                    rlRotatef(rotation, 1.0f, 1.0f, 1.0f);
+                    DrawCubeWires((Vector3){ -2.5f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, RED);
                 rlPopMatrix();
-                
-                rlSetLineWidth(1.0f); // Reset to default
+                rlSetLineWidth(1.0f);
                 rlEnableBackfaceCulling();
+
+                // Thin blue cube for comparison
+                rlPushMatrix();
+                    rlRotatef(rotation, 1.0f, 1.0f, 1.0f);
+                    DrawCubeWires((Vector3){ 2.5f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, BLUE);
+                rlPopMatrix();
             EndMode3D();
 
             DrawFPS(10, 10);
