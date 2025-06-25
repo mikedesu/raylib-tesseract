@@ -29,7 +29,7 @@ int main(void)
             ClearBackground(RAYWHITE);
 
             BeginMode3D(camera);
-                DrawCubeWires((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, RED);
+                DrawCubeWiresV((Vector3){ 0.0f, 0.0f, 0.0f }, (Vector3){ 2.0f, 2.0f, 2.0f }, RED, 3.0f);
             EndMode3D();
 
             DrawFPS(10, 10);
