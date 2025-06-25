@@ -5,9 +5,8 @@
 #include <cmath>
 
 // Function to project 4D vertices to 3D
-std::vector<Vector3> projectTesseract(const std::vector<std::vector<float>>& vertices, 
-                                    float xy, float xz, float xw, 
-                                    float yz, float yw, float zw) {
+std::vector<Vector3> projectTesseract(
+    const std::vector<std::vector<float>>& vertices, float xy, float xz, float xw, float yz, float yw, float zw) {
     std::vector<Vector3> projected;
     for (const auto& vertex : vertices) {
         // Apply 4D rotations
@@ -15,7 +14,7 @@ std::vector<Vector3> projectTesseract(const std::vector<std::vector<float>>& ver
         float y = vertex[1];
         float z = vertex[2];
         float w = vertex[3];
-        
+
         // Rotate in 4D space
         float x1 = x * cos(xy) - y * sin(xy);
         float y1 = x * sin(xy) + y * cos(xy);
@@ -32,18 +31,13 @@ std::vector<Vector3> projectTesseract(const std::vector<std::vector<float>>& ver
 
         // Project to 3D (perspective projection)
         float scale = 2.0f / (4.0f + w3);
-        Vector3 proj = {
-            x3 * scale,
-            y3 * scale,
-            z3 * scale
-        };
+        Vector3 proj = {x3 * scale, y3 * scale, z3 * scale};
         projected.push_back(proj);
     }
     return projected;
 }
 
-int main(void)
-{
+int main(void) {
     // Initialization
     const int screenWidth = 1920;
     const int screenHeight = 1080;
@@ -51,33 +45,41 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "3D Cube Example");
 
     // Define the camera to look into our 3d world
-    Camera3D camera = { 0 };
-    camera.position = (Vector3){ 10.0f, 10.0f, 10.0f }; // Camera position
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };    // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };        // Camera up vector
-    camera.fovy = 45.0f;                              // Camera field-of-view Y
-    camera.projection = CAMERA_PERSPECTIVE;           // Camera projection type
+    Camera3D camera = {0};
+    camera.position = (Vector3){10.0f, 10.0f, 10.0f}; // Camera position
+    camera.target = (Vector3){0.0f, 0.0f, 0.0f}; // Camera looking at point
+    camera.up = (Vector3){0.0f, 1.0f, 0.0f}; // Camera up vector
+    camera.fovy = 45.0f; // Camera field-of-view Y
+    camera.projection = CAMERA_PERSPECTIVE; // Camera projection type
 
     // Define 4D cube (tesseract) vertices
-    std::vector<std::vector<float>> tesseractVertices = {
-        {-1, -1, -1, -1}, {-1, -1, -1, 1}, {-1, -1, 1, -1}, {-1, -1, 1, 1},
-        {-1, 1, -1, -1}, {-1, 1, -1, 1}, {-1, 1, 1, -1}, {-1, 1, 1, 1},
-        {1, -1, -1, -1}, {1, -1, -1, 1}, {1, -1, 1, -1}, {1, -1, 1, 1},
-        {1, 1, -1, -1}, {1, 1, -1, 1}, {1, 1, 1, -1}, {1, 1, 1, 1}
-    };
+    std::vector<std::vector<float>> tesseractVertices = {{-1, -1, -1, -1},
+                                                         {-1, -1, -1, 1},
+                                                         {-1, -1, 1, -1},
+                                                         {-1, -1, 1, 1},
+                                                         {-1, 1, -1, -1},
+                                                         {-1, 1, -1, 1},
+                                                         {-1, 1, 1, -1},
+                                                         {-1, 1, 1, 1},
+                                                         {1, -1, -1, -1},
+                                                         {1, -1, -1, 1},
+                                                         {1, -1, 1, -1},
+                                                         {1, -1, 1, 1},
+                                                         {1, 1, -1, -1},
+                                                         {1, 1, -1, 1},
+                                                         {1, 1, 1, -1},
+                                                         {1, 1, 1, 1}};
 
     // Define edges between vertices
     std::vector<std::pair<int, int>> edges = {
-        {0,1}, {0,2}, {0,4}, {1,3}, {1,5}, {2,3}, {2,6}, {3,7},
-        {4,5}, {4,6}, {5,7}, {6,7}, {8,9}, {8,10}, {8,12}, {9,11},
-        {9,13}, {10,11}, {10,14}, {11,15}, {12,13}, {12,14}, {13,15},
-        {14,15}, {0,8}, {1,9}, {2,10}, {3,11}, {4,12}, {5,13}, {6,14}, {7,15}
-    };
+        {0, 1},   {0, 2},   {0, 4},  {1, 3},  {1, 5},  {2, 3},  {2, 6},   {3, 7},   {4, 5},   {4, 6},   {5, 7},
+        {6, 7},   {8, 9},   {8, 10}, {8, 12}, {9, 11}, {9, 13}, {10, 11}, {10, 14}, {11, 15}, {12, 13}, {12, 14},
+        {13, 15}, {14, 15}, {0, 8},  {1, 9},  {2, 10}, {3, 11}, {4, 12},  {5, 13},  {6, 14},  {7, 15}};
 
     // Scene management
-    enum Scene { 
-        TESSERACT, 
-        PLACEHOLDER, 
+    enum Scene {
+        TESSERACT,
+        PLACEHOLDER,
         COLORED_FACES,
         PYRAMID_BLACK_LINES,
         PYRAMID_WHITE_LINES,
@@ -87,30 +89,30 @@ int main(void)
 
     // Colors for tesseract faces (24 unique colors)
     const Color faceColors[24] = {
-        (Color){255, 0, 0, 255},       // Red
-        (Color){0, 255, 0, 255},      // Green
-        (Color){0, 0, 255, 255},      // Blue
-        (Color){255, 255, 0, 255},     // Yellow
-        (Color){255, 165, 0, 255},     // Orange
-        (Color){128, 0, 128, 255},     // Purple
-        (Color){0, 191, 255, 255},    // Sky Blue
-        (Color){255, 192, 203, 255},  // Pink
-        (Color){50, 205, 50, 255},     // Lime Green
-        (Color){255, 215, 0, 255},     // Gold
-        (Color){138, 43, 226, 255},    // Violet
-        (Color){165, 42, 42, 255},     // Brown
-        (Color){245, 245, 220, 255},   // Beige
-        (Color){255, 0, 255, 255},     // Magenta
-        (Color){128, 0, 0, 255},       // Maroon
-        (Color){0, 100, 0, 255},       // Dark Green
-        (Color){0, 0, 139, 255},       // Dark Blue
-        (Color){139, 0, 139, 255},     // Dark Purple
-        (Color){101, 67, 33, 255},     // Dark Brown
-        (Color){169, 169, 169, 255},   // Dark Gray
-        (Color){211, 211, 211, 255},   // Light Gray
-        (Color){245, 245, 245, 255},    // Almost White
-        (Color){128, 128, 128, 255},   // Gray
-        (Color){255, 255, 255, 255}    // White
+        (Color){255, 0, 0, 255}, // Red
+        (Color){0, 255, 0, 255}, // Green
+        (Color){0, 0, 255, 255}, // Blue
+        (Color){255, 255, 0, 255}, // Yellow
+        (Color){255, 165, 0, 255}, // Orange
+        (Color){128, 0, 128, 255}, // Purple
+        (Color){0, 191, 255, 255}, // Sky Blue
+        (Color){255, 192, 203, 255}, // Pink
+        (Color){50, 205, 50, 255}, // Lime Green
+        (Color){255, 215, 0, 255}, // Gold
+        (Color){138, 43, 226, 255}, // Violet
+        (Color){165, 42, 42, 255}, // Brown
+        (Color){245, 245, 220, 255}, // Beige
+        (Color){255, 0, 255, 255}, // Magenta
+        (Color){128, 0, 0, 255}, // Maroon
+        (Color){0, 100, 0, 255}, // Dark Green
+        (Color){0, 0, 139, 255}, // Dark Blue
+        (Color){139, 0, 139, 255}, // Dark Purple
+        (Color){101, 67, 33, 255}, // Dark Brown
+        (Color){169, 169, 169, 255}, // Dark Gray
+        (Color){211, 211, 211, 255}, // Light Gray
+        (Color){245, 245, 245, 255}, // Almost White
+        (Color){128, 128, 128, 255}, // Gray
+        (Color){255, 255, 255, 255} // White
     };
 
     // Rotation angles for 4D
@@ -154,199 +156,230 @@ int main(void)
 
         // Update rotation angle for current axis
         switch (currentAxis) {
-            case 0: angleXY += 0.02f; break;
-            case 1: angleXZ += 0.02f; break;
-            case 2: angleXW += 0.02f; break;
-            case 3: angleYZ += 0.02f; break;
-            case 4: angleYW += 0.02f; break;
-            case 5: angleZW += 0.02f; break;
+        case 0:
+            angleXY += 0.02f;
+            break;
+        case 1:
+            angleXZ += 0.02f;
+            break;
+        case 2:
+            angleXW += 0.02f;
+            break;
+        case 3:
+            angleYZ += 0.02f;
+            break;
+        case 4:
+            angleYW += 0.02f;
+            break;
+        case 5:
+            angleZW += 0.02f;
+            break;
         }
+
+        // Define 4D pyramid vertices
+        std::vector<std::vector<float>> pyramidVertices = {
+            {0, 0, 0, 0}, // Apex
+            {1, 1, 1, 1}, // Base vertex 1
+            {1, -1, 1, 1}, // Base vertex 2
+            {-1, -1, 1, 1}, // Base vertex 3
+            {-1, 1, 1, 1}, // Base vertex 4
+            {1, 1, -1, 1}, // Base vertex 5
+            {1, -1, -1, 1}, // Base vertex 6
+            {-1, -1, -1, 1}, // Base vertex 7
+            {-1, 1, -1, 1} // Base vertex 8
+        };
+
+        // Define pyramid edges
+        std::vector<std::pair<int, int>> pyramidEdges = {
+            {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}, {0, 8}, // Apex to base
+            {1, 2}, {2, 3}, {3, 4}, {4, 1}, // Base square 1
+            {5, 6}, {6, 7}, {7, 8}, {8, 5}, // Base square 2
+            {1, 5}, {2, 6}, {3, 7}, {4, 8} // Connecting edges
+        };
+
+        // Define pyramid faces
+        int pyramidFaces[16][4] = {// Triangular faces from apex
+                                   {0, 1, 2, 2},
+                                   {0, 2, 3, 3},
+                                   {0, 3, 4, 4},
+                                   {0, 4, 1, 1},
+                                   {0, 5, 6, 6},
+                                   {0, 6, 7, 7},
+                                   {0, 7, 8, 8},
+                                   {0, 8, 5, 5},
+                                   // Base faces
+                                   {1, 2, 6, 5},
+                                   {2, 3, 7, 6},
+                                   {3, 4, 8, 7},
+                                   {4, 1, 5, 8}};
 
         // Draw
         BeginDrawing();
-            ClearBackground(RAYWHITE);
+        ClearBackground(RAYWHITE);
 
-            if (currentScene == TESSERACT) {
-                BeginMode3D(camera);
-                    // Project and draw tesseract
-                    auto projectedVertices = projectTesseract(tesseractVertices, 
-                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
-                    
-                    // Draw edges in red
-                    for (const auto& edge : edges) {
-                        DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], RED);
-                    }
-                    rlEnableBackfaceCulling(); // Re-enable backface culling
-                EndMode3D();
-            } else if (currentScene == PLACEHOLDER) {
-                // Placeholder scene - tesseract with white lines
-                ClearBackground(BLACK);
-                BeginMode3D(camera);
-                    // Project and draw tesseract
-                    auto projectedVertices = projectTesseract(tesseractVertices, 
-                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
-                    
-                    // Draw edges in white
-                    for (const auto& edge : edges) {
-                        DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], WHITE);
-                    }
-                EndMode3D();
-            } else if (currentScene == COLORED_FACES) {
-                // Colored faces scene
-                ClearBackground(BLACK);
-                BeginMode3D(camera);
-                    rlDisableBackfaceCulling(); // Disable backface culling
-                    // Project tesseract
-                    auto projectedVertices = projectTesseract(tesseractVertices, 
-                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
-                    
-                    // Define all 24 square faces of the tesseract
-                    int faces[24][4] = {
-                        // Inner cube
-                        {0, 1, 3, 2}, {4, 5, 7, 6}, 
-                        {0, 1, 5, 4}, {2, 3, 7, 6},
-                        {0, 2, 6, 4}, {1, 3, 7, 5},
-                        
-                        // Outer cube
-                        {8, 9, 11, 10}, {12, 13, 15, 14},
-                        {8, 9, 13, 12}, {10, 11, 15, 14},
-                        {8, 10, 14, 12}, {9, 11, 15, 13},
-                        
-                        // Connecting faces between inner and outer cubes
-                        {0, 1, 9, 8}, {1, 3, 11, 9},
-                        {2, 3, 11, 10}, {0, 2, 10, 8},
-                        {4, 5, 13, 12}, {5, 7, 15, 13},
-                        {6, 7, 15, 14}, {4, 6, 14, 12},
-                        {0, 4, 12, 8}, {1, 5, 13, 9},
-                        {2, 6, 14, 10}, {3, 7, 15, 11}
-                    };
+        if (currentScene == TESSERACT) {
+            BeginMode3D(camera);
+            // Project and draw tesseract
+            auto projectedVertices =
+                projectTesseract(tesseractVertices, angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+
+            // Draw edges in red
+            for (const auto& edge : edges) {
+                DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], RED);
+            }
+            rlEnableBackfaceCulling(); // Re-enable backface culling
+            EndMode3D();
+        } else if (currentScene == PLACEHOLDER) {
+            // Placeholder scene - tesseract with white lines
+            ClearBackground(BLACK);
+            BeginMode3D(camera);
+            // Project and draw tesseract
+            auto projectedVertices =
+                projectTesseract(tesseractVertices, angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+
+            // Draw edges in white
+            for (const auto& edge : edges) {
+                DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], WHITE);
+            }
+            EndMode3D();
+        } else if (currentScene == COLORED_FACES) {
+            // Colored faces scene
+            ClearBackground(BLACK);
+            BeginMode3D(camera);
+            rlDisableBackfaceCulling(); // Disable backface culling
+            // Project tesseract
+            auto projectedVertices =
+                projectTesseract(tesseractVertices, angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+
+            // Define all 24 square faces of the tesseract
+            int faces[24][4] = {// Inner cube
+                                {0, 1, 3, 2},
+                                {4, 5, 7, 6},
+                                {0, 1, 5, 4},
+                                {2, 3, 7, 6},
+                                {0, 2, 6, 4},
+                                {1, 3, 7, 5},
+
+                                // Outer cube
+                                {8, 9, 11, 10},
+                                {12, 13, 15, 14},
+                                {8, 9, 13, 12},
+                                {10, 11, 15, 14},
+                                {8, 10, 14, 12},
+                                {9, 11, 15, 13},
+
+                                // Connecting faces between inner and outer cubes
+                                {0, 1, 9, 8},
+                                {1, 3, 11, 9},
+                                {2, 3, 11, 10},
+                                {0, 2, 10, 8},
+                                {4, 5, 13, 12},
+                                {5, 7, 15, 13},
+                                {6, 7, 15, 14},
+                                {4, 6, 14, 12},
+                                {0, 4, 12, 8},
+                                {1, 5, 13, 9},
+                                {2, 6, 14, 10},
+                                {3, 7, 15, 11}};
 
 
-                    // Define 4D pyramid vertices
-                    std::vector<std::vector<float>> pyramidVertices = {
-                        {0, 0, 0, 0},    // Apex
-                        {1, 1, 1, 1},    // Base vertex 1
-                        {1, -1, 1, 1},   // Base vertex 2
-                        {-1, -1, 1, 1},  // Base vertex 3
-                        {-1, 1, 1, 1},   // Base vertex 4
-                        {1, 1, -1, 1},   // Base vertex 5
-                        {1, -1, -1, 1},  // Base vertex 6
-                        {-1, -1, -1, 1}, // Base vertex 7
-                        {-1, 1, -1, 1}   // Base vertex 8
-                    };
 
-                    // Define pyramid edges
-                    std::vector<std::pair<int, int>> pyramidEdges = {
-                        {0,1}, {0,2}, {0,3}, {0,4}, {0,5}, {0,6}, {0,7}, {0,8}, // Apex to base
-                        {1,2}, {2,3}, {3,4}, {4,1}, // Base square 1
-                        {5,6}, {6,7}, {7,8}, {8,5}, // Base square 2
-                        {1,5}, {2,6}, {3,7}, {4,8}  // Connecting edges
-                    };
 
-                    // Define pyramid faces
-                    int pyramidFaces[16][4] = {
-                        // Triangular faces from apex
-                        {0,1,2,2}, {0,2,3,3}, {0,3,4,4}, {0,4,1,1},
-                        {0,5,6,6}, {0,6,7,7}, {0,7,8,8}, {0,8,5,5},
-                        // Base faces
-                        {1,2,6,5}, {2,3,7,6}, {3,4,8,7}, {4,1,5,8}
-                    };
-                    
-                    // Draw each face with a different color
-                    for (int i = 0; i < 24; i++) {
-                        Vector3 v1 = projectedVertices[faces[i][0]];
-                        Vector3 v2 = projectedVertices[faces[i][1]];
-                        Vector3 v3 = projectedVertices[faces[i][2]];
-                        Vector3 v4 = projectedVertices[faces[i][3]];
-                        
-                        // Draw the face as a quad
-                        rlBegin(RL_QUADS);
-                            rlColor4ub(faceColors[i].r, faceColors[i].g, faceColors[i].b, faceColors[i].a);
-                            rlVertex3f(v1.x, v1.y, v1.z);
-                            rlVertex3f(v2.x, v2.y, v2.z);
-                            rlVertex3f(v3.x, v3.y, v3.z);
-                            rlVertex3f(v4.x, v4.y, v4.z);
-                        rlEnd();
-                    }
-                    
-                    // Draw edges in black for definition
-                    for (const auto& edge : edges) {
-                        DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
-                    }
-                EndMode3D();
-            } else if (currentScene == PYRAMID_BLACK_LINES) {
-                ClearBackground(RAYWHITE);
-                BeginMode3D(camera);
-                    // Project and draw pyramid
-                    auto projectedVertices = projectTesseract(pyramidVertices, 
-                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
-                    
-                    // Draw edges in black
-                    for (const auto& edge : pyramidEdges) {
-                        DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
-                    }
-                EndMode3D();
-            } else if (currentScene == PYRAMID_WHITE_LINES) {
-                ClearBackground(BLACK);
-                BeginMode3D(camera);
-                    // Project and draw pyramid
-                    auto projectedVertices = projectTesseract(pyramidVertices, 
-                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
-                    
-                    // Draw edges in white
-                    for (const auto& edge : pyramidEdges) {
-                        DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], WHITE);
-                    }
-                EndMode3D();
-            } else if (currentScene == PYRAMID_COLORED_FACES) {
-                ClearBackground(BLACK);
-                BeginMode3D(camera);
-                    rlDisableBackfaceCulling();
-                    // Project pyramid
-                    auto projectedVertices = projectTesseract(pyramidVertices, 
-                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
-                    
-                    // Draw each face with a different color
-                    for (int i = 0; i < 16; i++) {
-                        Vector3 v1 = projectedVertices[pyramidFaces[i][0]];
-                        Vector3 v2 = projectedVertices[pyramidFaces[i][1]];
-                        Vector3 v3 = projectedVertices[pyramidFaces[i][2]];
-                        Vector3 v4 = projectedVertices[pyramidFaces[i][3]];
-                        
-                        rlBegin(RL_QUADS);
-                            rlColor4ub(faceColors[i].r, faceColors[i].g, faceColors[i].b, faceColors[i].a);
-                            rlVertex3f(v1.x, v1.y, v1.z);
-                            rlVertex3f(v2.x, v2.y, v2.z);
-                            rlVertex3f(v3.x, v3.y, v3.z);
-                            rlVertex3f(v4.x, v4.y, v4.z);
-                        rlEnd();
-                    }
-                    
-                    // Draw edges in black for definition
-                    for (const auto& edge : pyramidEdges) {
-                        DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
-                    }
-                EndMode3D();
+            // Draw each face with a different color
+            for (int i = 0; i < 24; i++) {
+                Vector3 v1 = projectedVertices[faces[i][0]];
+                Vector3 v2 = projectedVertices[faces[i][1]];
+                Vector3 v3 = projectedVertices[faces[i][2]];
+                Vector3 v4 = projectedVertices[faces[i][3]];
+
+                // Draw the face as a quad
+                rlBegin(RL_QUADS);
+                rlColor4ub(faceColors[i].r, faceColors[i].g, faceColors[i].b, faceColors[i].a);
+                rlVertex3f(v1.x, v1.y, v1.z);
+                rlVertex3f(v2.x, v2.y, v2.z);
+                rlVertex3f(v3.x, v3.y, v3.z);
+                rlVertex3f(v4.x, v4.y, v4.z);
+                rlEnd();
             }
 
-            // Draw current rotation axis and info text (centered)
-            const char* axisText = TextFormat("Rotation Axis: %s", axisNames[currentAxis]);
-            int axisWidth = MeasureText(axisText, 30);
-            DrawText(axisText, (screenWidth - axisWidth)/2, 40, 30, LIGHTGRAY);
-            
-            const char* titleText = "4D Tesseract";
-            int titleWidth = MeasureText(titleText, 30);
-            DrawText(titleText, (screenWidth - titleWidth)/2, 80, 30, LIGHTGRAY);
-            
-            const char* projectionText = "(3D Projection)";
-            int projectionWidth = MeasureText(projectionText, 30);
-            DrawText(projectionText, (screenWidth - projectionWidth)/2, 120, 30, LIGHTGRAY);
-            
-            const char* creditText = "Vibe Coded With Deepseek";
-            int creditWidth = MeasureText(creditText, 30);
-            DrawText(creditText, (screenWidth - creditWidth)/2, 160, 30, LIGHTGRAY);
-            
-            DrawFPS(10, 10);
+            // Draw edges in black for definition
+            for (const auto& edge : edges) {
+                DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
+            }
+            EndMode3D();
+        } else if (currentScene == PYRAMID_BLACK_LINES) {
+            ClearBackground(RAYWHITE);
+            BeginMode3D(camera);
+            // Project and draw pyramid
+            auto projectedVertices =
+                projectTesseract(pyramidVertices, angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+
+            // Draw edges in black
+            for (const auto& edge : pyramidEdges) {
+                DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
+            }
+            EndMode3D();
+        } else if (currentScene == PYRAMID_WHITE_LINES) {
+            ClearBackground(BLACK);
+            BeginMode3D(camera);
+            // Project and draw pyramid
+            auto projectedVertices =
+                projectTesseract(pyramidVertices, angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+
+            // Draw edges in white
+            for (const auto& edge : pyramidEdges) {
+                DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], WHITE);
+            }
+            EndMode3D();
+        } else if (currentScene == PYRAMID_COLORED_FACES) {
+            ClearBackground(BLACK);
+            BeginMode3D(camera);
+            rlDisableBackfaceCulling();
+            // Project pyramid
+            auto projectedVertices =
+                projectTesseract(pyramidVertices, angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+
+            // Draw each face with a different color
+            for (int i = 0; i < 16; i++) {
+                Vector3 v1 = projectedVertices[pyramidFaces[i][0]];
+                Vector3 v2 = projectedVertices[pyramidFaces[i][1]];
+                Vector3 v3 = projectedVertices[pyramidFaces[i][2]];
+                Vector3 v4 = projectedVertices[pyramidFaces[i][3]];
+
+                rlBegin(RL_QUADS);
+                rlColor4ub(faceColors[i].r, faceColors[i].g, faceColors[i].b, faceColors[i].a);
+                rlVertex3f(v1.x, v1.y, v1.z);
+                rlVertex3f(v2.x, v2.y, v2.z);
+                rlVertex3f(v3.x, v3.y, v3.z);
+                rlVertex3f(v4.x, v4.y, v4.z);
+                rlEnd();
+            }
+
+            // Draw edges in black for definition
+            for (const auto& edge : pyramidEdges) {
+                DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
+            }
+            EndMode3D();
+        }
+
+        // Draw current rotation axis and info text (centered)
+        const char* axisText = TextFormat("Rotation Axis: %s", axisNames[currentAxis]);
+        int axisWidth = MeasureText(axisText, 30);
+        DrawText(axisText, (screenWidth - axisWidth) / 2, 40, 30, LIGHTGRAY);
+
+        const char* titleText = "4D Tesseract";
+        int titleWidth = MeasureText(titleText, 30);
+        DrawText(titleText, (screenWidth - titleWidth) / 2, 80, 30, LIGHTGRAY);
+
+        const char* projectionText = "(3D Projection)";
+        int projectionWidth = MeasureText(projectionText, 30);
+        DrawText(projectionText, (screenWidth - projectionWidth) / 2, 120, 30, LIGHTGRAY);
+
+        const char* creditText = "Vibe Coded With Deepseek";
+        int creditWidth = MeasureText(creditText, 30);
+        DrawText(creditText, (screenWidth - creditWidth) / 2, 160, 30, LIGHTGRAY);
+
+        DrawFPS(10, 10);
         EndDrawing();
     }
 
