@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include "rlgl.h"  // For rlSetLineWidth
 
 int main(void)
 {
@@ -29,9 +30,12 @@ int main(void)
             ClearBackground(RAYWHITE);
 
             BeginMode3D(camera);
+                // Set line width and draw cube
+                rlDisableBackfaceCulling(); // Needed for thicker lines
                 rlSetLineWidth(3.0f);
                 DrawCubeWires((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, RED);
                 rlSetLineWidth(1.0f); // Reset to default
+                rlEnableBackfaceCulling();
             EndMode3D();
 
             DrawFPS(10, 10);
