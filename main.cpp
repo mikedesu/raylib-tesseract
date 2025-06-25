@@ -74,8 +74,14 @@ int main(void)
     };
 
     // Scene management
-    enum Scene { TESSERACT, PLACEHOLDER };
+    enum Scene { TESSERACT, PLACEHOLDER, COLORED_FACES };
     Scene currentScene = TESSERACT;
+
+    // Colors for tesseract faces
+    const Color faceColors[8] = {
+        RED, GREEN, BLUE, YELLOW, 
+        ORANGE, PURPLE, SKYBLUE, PINK
+    };
 
     // Rotation angles for 4D
     float angleXY = 0.0f;
@@ -93,7 +99,7 @@ int main(void)
     {
         // Update
         if (IsKeyPressed(KEY_SPACE)) {
-            currentScene = (currentScene == TESSERACT) ? PLACEHOLDER : TESSERACT;
+            currentScene = static_cast<Scene>((currentScene + 1) % 3);
         }
 
         // Update rotation angles regardless of scene
@@ -119,7 +125,7 @@ int main(void)
                         DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], RED);
                     }
                 EndMode3D();
-            } else {
+            } else if (currentScene == PLACEHOLDER) {
                 // Placeholder scene - tesseract with white lines
                 ClearBackground(BLACK);
                 BeginMode3D(camera);
@@ -130,6 +136,43 @@ int main(void)
                     // Draw edges in white
                     for (const auto& edge : edges) {
                         DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], WHITE);
+                    }
+                EndMode3D();
+            } else {
+                // Colored faces scene
+                ClearBackground(BLACK);
+                BeginMode3D(camera);
+                    // Project tesseract
+                    auto projectedVertices = projectTesseract(tesseractVertices, 
+                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+                    
+                    // Define cube faces (using the first 8 vertices)
+                    int faces[6][4] = {
+                        {0, 1, 3, 2}, {4, 5, 7, 6}, 
+                        {0, 1, 5, 4}, {2, 3, 7, 6},
+                        {0, 2, 6, 4}, {1, 3, 7, 5}
+                    };
+                    
+                    // Draw each face with a different color
+                    for (int i = 0; i < 6; i++) {
+                        Vector3 v1 = projectedVertices[faces[i][0]];
+                        Vector3 v2 = projectedVertices[faces[i][1]];
+                        Vector3 v3 = projectedVertices[faces[i][2]];
+                        Vector3 v4 = projectedVertices[faces[i][3]];
+                        
+                        // Draw the face as a quad
+                        rlBegin(RL_QUADS);
+                            rlColor4ub(faceColors[i].r, faceColors[i].g, faceColors[i].b, faceColors[i].a);
+                            rlVertex3f(v1.x, v1.y, v1.z);
+                            rlVertex3f(v2.x, v2.y, v2.z);
+                            rlVertex3f(v3.x, v3.y, v3.z);
+                            rlVertex3f(v4.x, v4.y, v4.z);
+                        rlEnd();
+                    }
+                    
+                    // Draw edges in black for definition
+                    for (const auto& edge : edges) {
+                        DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
                     }
                 EndMode3D();
             }
