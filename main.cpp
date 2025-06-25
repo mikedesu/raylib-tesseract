@@ -103,6 +103,14 @@ int main(void)
             currentScene = static_cast<Scene>((currentScene + 1) % 3);
         }
 
+        // Handle zoom
+        if (IsKeyDown(KEY_Z)) {
+            camera.position = Vector3Add(camera.position, Vector3Scale(Vector3Normalize(camera.position), 0.1f));
+        }
+        if (IsKeyDown(KEY_X)) {
+            camera.position = Vector3Subtract(camera.position, Vector3Scale(Vector3Normalize(camera.position), 0.1f));
+        }
+
         // Update rotation angles regardless of scene
         angleXY += 0.01f;
         angleXZ += 0.02f;
