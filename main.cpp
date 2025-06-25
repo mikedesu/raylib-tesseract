@@ -31,9 +31,17 @@ int main(void)
 
             BeginMode3D(camera);
                 // Set line width and draw cube
+                static float rotation = 0.0f;
+                rotation += 0.5f;
+                
                 rlDisableBackfaceCulling(); // Needed for thicker lines
-                rlSetLineWidth(3.0f);
-                DrawCubeWires((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, RED);
+                rlSetLineWidth(10.0f); // Much thicker lines
+                
+                rlPushMatrix();
+                    rlRotatef(rotation, 1.0f, 1.0f, 1.0f); // Rotate the cube
+                    DrawCubeWires((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, RED);
+                rlPopMatrix();
+                
                 rlSetLineWidth(1.0f); // Reset to default
                 rlEnableBackfaceCulling();
             EndMode3D();
