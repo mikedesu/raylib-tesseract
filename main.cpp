@@ -111,8 +111,46 @@ int main(void)
                     }
                 EndMode3D();
             } else {
-                // Placeholder scene - just black background
-                ClearBackground(BLACK);
+                // Placeholder scene - tesseract with white lines
+                BeginMode3D(camera);
+                    // Project 4D to 3D and draw edges
+                    std::vector<Vector3> projectedVertices;
+                    for (const auto& vertex : tesseractVertices) {
+                        // Apply 4D rotations
+                        float x = vertex[0];
+                        float y = vertex[1];
+                        float z = vertex[2];
+                        float w = vertex[3];
+                        
+                        // Rotate in 4D space
+                        float x1 = x * cos(angleXY) - y * sin(angleXY);
+                        float y1 = x * sin(angleXY) + y * cos(angleXY);
+                        float z1 = z * cos(angleXZ) - x1 * sin(angleXZ);
+                        float x2 = x1 * cos(angleXZ) + z * sin(angleXZ);
+                        float w1 = w * cos(angleXW) - x2 * sin(angleXW);
+                        float x3 = x2 * cos(angleXW) + w * sin(angleXW);
+                        float y2 = y1 * cos(angleYZ) - z1 * sin(angleYZ);
+                        float z2 = y1 * sin(angleYZ) + z1 * cos(angleYZ);
+                        float w2 = w1 * cos(angleYW) - y2 * sin(angleYW);
+                        float y3 = y2 * cos(angleYW) + w1 * sin(angleYW);
+                        float z3 = z2 * cos(angleZW) - w2 * sin(angleZW);
+                        float w3 = z2 * sin(angleZW) + w2 * cos(angleZW);
+
+                        // Project to 3D (perspective projection)
+                        float scale = 2.0f / (4.0f + w3);
+                        Vector3 proj = {
+                            x3 * scale,
+                            y3 * scale,
+                            z3 * scale
+                        };
+                        projectedVertices.push_back(proj);
+                    }
+
+                    // Draw edges in white
+                    for (const auto& edge : edges) {
+                        DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], WHITE);
+                    }
+                EndMode3D();
             }
 
             DrawFPS(10, 10);
