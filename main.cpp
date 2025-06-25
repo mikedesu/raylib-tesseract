@@ -647,6 +647,25 @@ int main(void) {
         int creditWidth = MeasureText(creditText, 30);
         DrawText(creditText, (screenWidth - creditWidth) / 2, 160, 30, LIGHTGRAY);
 
+        // Add scene name text
+        const char* sceneNames[] = {
+            "4D Tesseract (Black Lines)",
+            "4D Tesseract (White Lines)", 
+            "4D Tesseract (Colored Faces)",
+            "4D Pyramid (Black Lines)",
+            "4D Pyramid (White Lines)",
+            "4D Pyramid (Colored Faces)",
+            "4D Pentagon (Black Lines)",
+            "4D Pentagon (White Lines)",
+            "4D Pentagon (Colored Faces)",
+            "4D Hexagon (Black Lines)",
+            "4D Hexagon (White Lines)",
+            "4D Hexagon (Colored Faces)"
+        };
+        const char* sceneText = sceneNames[currentScene];
+        int sceneWidth = MeasureText(sceneText, 30);
+        DrawText(sceneText, (screenWidth - sceneWidth) / 2, 200, 30, LIGHTGRAY);
+
         DrawFPS(10, 10);
         EndDrawing();
     }
