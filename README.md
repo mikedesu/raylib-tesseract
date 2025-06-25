@@ -34,4 +34,4 @@ make
 - g++ compiler
 
 ## License
-MIT
+WTFPL - Do What the Fuck You Want to Public License
