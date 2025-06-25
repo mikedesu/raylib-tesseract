@@ -75,7 +75,14 @@ int main(void)
     };
 
     // Scene management
-    enum Scene { TESSERACT, PLACEHOLDER, COLORED_FACES };
+    enum Scene { 
+        TESSERACT, 
+        PLACEHOLDER, 
+        COLORED_FACES,
+        PYRAMID_BLACK_LINES,
+        PYRAMID_WHITE_LINES,
+        PYRAMID_COLORED_FACES
+    };
     Scene currentScene = TESSERACT;
 
     // Colors for tesseract faces (24 unique colors)
@@ -184,7 +191,7 @@ int main(void)
                         DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], WHITE);
                     }
                 EndMode3D();
-            } else {
+            } else if (currentScene == COLORED_FACES) {
                 // Colored faces scene
                 ClearBackground(BLACK);
                 BeginMode3D(camera);
@@ -213,6 +220,36 @@ int main(void)
                         {0, 4, 12, 8}, {1, 5, 13, 9},
                         {2, 6, 14, 10}, {3, 7, 15, 11}
                     };
+
+                    // Define 4D pyramid vertices
+                    std::vector<std::vector<float>> pyramidVertices = {
+                        {0, 0, 0, 0},    // Apex
+                        {1, 1, 1, 1},    // Base vertex 1
+                        {1, -1, 1, 1},   // Base vertex 2
+                        {-1, -1, 1, 1},  // Base vertex 3
+                        {-1, 1, 1, 1},   // Base vertex 4
+                        {1, 1, -1, 1},   // Base vertex 5
+                        {1, -1, -1, 1},  // Base vertex 6
+                        {-1, -1, -1, 1}, // Base vertex 7
+                        {-1, 1, -1, 1}   // Base vertex 8
+                    };
+
+                    // Define pyramid edges
+                    std::vector<std::pair<int, int>> pyramidEdges = {
+                        {0,1}, {0,2}, {0,3}, {0,4}, {0,5}, {0,6}, {0,7}, {0,8}, // Apex to base
+                        {1,2}, {2,3}, {3,4}, {4,1}, // Base square 1
+                        {5,6}, {6,7}, {7,8}, {8,5}, // Base square 2
+                        {1,5}, {2,6}, {3,7}, {4,8}  // Connecting edges
+                    };
+
+                    // Define pyramid faces
+                    int pyramidFaces[16][4] = {
+                        // Triangular faces from apex
+                        {0,1,2,2}, {0,2,3,3}, {0,3,4,4}, {0,4,1,1},
+                        {0,5,6,6}, {0,6,7,7}, {0,7,8,8}, {0,8,5,5},
+                        // Base faces
+                        {1,2,6,5}, {2,3,7,6}, {3,4,8,7}, {4,1,5,8}
+                    };
                     
                     // Draw each face with a different color
                     for (int i = 0; i < 24; i++) {
@@ -233,6 +270,59 @@ int main(void)
                     
                     // Draw edges in black for definition
                     for (const auto& edge : edges) {
+                        DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
+                    }
+                EndMode3D();
+            } else if (currentScene == PYRAMID_BLACK_LINES) {
+                ClearBackground(RAYWHITE);
+                BeginMode3D(camera);
+                    // Project and draw pyramid
+                    auto projectedVertices = projectTesseract(pyramidVertices, 
+                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+                    
+                    // Draw edges in black
+                    for (const auto& edge : pyramidEdges) {
+                        DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
+                    }
+                EndMode3D();
+            } else if (currentScene == PYRAMID_WHITE_LINES) {
+                ClearBackground(BLACK);
+                BeginMode3D(camera);
+                    // Project and draw pyramid
+                    auto projectedVertices = projectTesseract(pyramidVertices, 
+                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+                    
+                    // Draw edges in white
+                    for (const auto& edge : pyramidEdges) {
+                        DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], WHITE);
+                    }
+                EndMode3D();
+            } else if (currentScene == PYRAMID_COLORED_FACES) {
+                ClearBackground(BLACK);
+                BeginMode3D(camera);
+                    rlDisableBackfaceCulling();
+                    // Project pyramid
+                    auto projectedVertices = projectTesseract(pyramidVertices, 
+                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+                    
+                    // Draw each face with a different color
+                    for (int i = 0; i < 16; i++) {
+                        Vector3 v1 = projectedVertices[pyramidFaces[i][0]];
+                        Vector3 v2 = projectedVertices[pyramidFaces[i][1]];
+                        Vector3 v3 = projectedVertices[pyramidFaces[i][2]];
+                        Vector3 v4 = projectedVertices[pyramidFaces[i][3]];
+                        
+                        rlBegin(RL_QUADS);
+                            rlColor4ub(faceColors[i].r, faceColors[i].g, faceColors[i].b, faceColors[i].a);
+                            rlVertex3f(v1.x, v1.y, v1.z);
+                            rlVertex3f(v2.x, v2.y, v2.z);
+                            rlVertex3f(v3.x, v3.y, v3.z);
+                            rlVertex3f(v4.x, v4.y, v4.z);
+                        rlEnd();
+                    }
+                    
+                    // Draw edges in black for definition
+                    for (const auto& edge : pyramidEdges) {
                         DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
                     }
                 EndMode3D();
