@@ -112,6 +112,7 @@ int main(void)
                 EndMode3D();
             } else {
                 // Placeholder scene - tesseract with white lines
+                ClearBackground(BLACK);
                 BeginMode3D(camera);
                     // Project 4D to 3D and draw edges
                     std::vector<Vector3> projectedVertices;
