@@ -86,7 +86,10 @@ int main(void) {
         PYRAMID_COLORED_FACES,
         PENTAGON_BLACK_LINES,
         PENTAGON_WHITE_LINES,
-        PENTAGON_COLORED_FACES
+        PENTAGON_COLORED_FACES,
+        HEXAGON_BLACK_LINES,
+        HEXAGON_WHITE_LINES,
+        HEXAGON_COLORED_FACES
     };
     Scene currentScene = TESSERACT;
 
@@ -138,7 +141,7 @@ int main(void) {
     {
         // Update
         if (IsKeyPressed(KEY_SPACE)) {
-            currentScene = static_cast<Scene>((currentScene + 1) % 9);
+            currentScene = static_cast<Scene>((currentScene + 1) % 12);
         }
 
         // Handle zoom
@@ -280,6 +283,48 @@ int main(void) {
                                     {3, 4, 9, 8, 8},
                                     {4, 5, 10, 9, 9},
                                     {5, 1, 6, 10, 10}};
+
+        // Define 4D hexagon vertices
+        std::vector<std::vector<float>> hexagonVertices = {
+            {0, 0, 0, 0},    // Center
+            {1, 0, 0, 1},    // Vertex 1
+            {0.5, 0.866, 0, 1}, // Vertex 2
+            {-0.5, 0.866, 0, 1}, // Vertex 3
+            {-1, 0, 0, 1}, // Vertex 4
+            {-0.5, -0.866, 0, 1}, // Vertex 5
+            {0.5, -0.866, 0, 1}, // Vertex 6
+            {1, 0, 0, -1},   // Vertex 7
+            {0.5, 0.866, 0, -1}, // Vertex 8
+            {-0.5, 0.866, 0, -1}, // Vertex 9
+            {-1, 0, 0, -1}, // Vertex 10
+            {-0.5, -0.866, 0, -1}, // Vertex 11
+            {0.5, -0.866, 0, -1}  // Vertex 12
+        };
+
+        // Define hexagon edges
+        std::vector<std::pair<int, int>> hexagonEdges = {
+            // Bottom hexagon
+            {0,1}, {0,2}, {0,3}, {0,4}, {0,5}, {0,6},
+            {1,2}, {2,3}, {3,4}, {4,5}, {5,6}, {6,1},
+            // Top hexagon
+            {0,7}, {0,8}, {0,9}, {0,10}, {0,11}, {0,12},
+            {7,8}, {8,9}, {9,10}, {10,11}, {11,12}, {12,7},
+            // Connecting edges
+            {1,7}, {2,8}, {3,9}, {4,10}, {5,11}, {6,12}
+        };
+
+        // Define hexagon faces
+        int hexagonFaces[14][6] = {
+            // Bottom faces
+            {0,1,2,2,2,2}, {0,2,3,3,3,3}, {0,3,4,4,4,4},
+            {0,4,5,5,5,5}, {0,5,6,6,6,6}, {0,6,1,1,1,1},
+            // Top faces
+            {0,7,8,8,8,8}, {0,8,9,9,9,9}, {0,9,10,10,10,10},
+            {0,10,11,11,11,11}, {0,11,12,12,12,12}, {0,12,7,7,7,7},
+            // Side faces
+            {1,2,8,7,7,7}, {2,3,9,8,8,8}, {3,4,10,9,9,9},
+            {4,5,11,10,10,10}, {5,6,12,11,11,11}, {6,1,7,12,12,12}
+        };
 
         // Draw
         BeginDrawing();
@@ -486,6 +531,69 @@ int main(void) {
             for (const auto& edge : pentagonEdges) {
                 DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
             }
+            EndMode3D();
+        } else if (currentScene == HEXAGON_BLACK_LINES) {
+            ClearBackground(RAYWHITE);
+            BeginMode3D(camera);
+                // Project and draw hexagon
+                auto projectedVertices = 
+                    projectTesseract(hexagonVertices, angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+                
+                // Draw edges in black
+                for (const auto& edge : hexagonEdges) {
+                    DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
+                }
+            EndMode3D();
+        } else if (currentScene == HEXAGON_WHITE_LINES) {
+            ClearBackground(BLACK);
+            BeginMode3D(camera);
+                // Project and draw hexagon
+                auto projectedVertices = 
+                    projectTesseract(hexagonVertices, angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+                
+                // Draw edges in white
+                for (const auto& edge : hexagonEdges) {
+                    DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], WHITE);
+                }
+            EndMode3D();
+        } else if (currentScene == HEXAGON_COLORED_FACES) {
+            ClearBackground(BLACK);
+            BeginMode3D(camera);
+                rlDisableBackfaceCulling();
+                // Project hexagon
+                auto projectedVertices = 
+                    projectTesseract(hexagonVertices, angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+                
+                // Draw each face with a different color
+                for (int i = 0; i < 14; i++) {
+                    Vector3 v1 = projectedVertices[hexagonFaces[i][0]];
+                    Vector3 v2 = projectedVertices[hexagonFaces[i][1]];
+                    Vector3 v3 = projectedVertices[hexagonFaces[i][2]];
+                    Vector3 v4 = projectedVertices[hexagonFaces[i][3]];
+                    Vector3 v5 = projectedVertices[hexagonFaces[i][4]];
+                    Vector3 v6 = projectedVertices[hexagonFaces[i][5]];
+                    
+                    rlBegin(RL_TRIANGLES);
+                        rlColor4ub(faceColors[i].r, faceColors[i].g, faceColors[i].b, faceColors[i].a);
+                        rlVertex3f(v1.x, v1.y, v1.z);
+                        rlVertex3f(v2.x, v2.y, v2.z);
+                        rlVertex3f(v3.x, v3.y, v3.z);
+                        rlVertex3f(v1.x, v1.y, v1.z);
+                        rlVertex3f(v3.x, v3.y, v3.z);
+                        rlVertex3f(v4.x, v4.y, v4.z);
+                        rlVertex3f(v1.x, v1.y, v1.z);
+                        rlVertex3f(v4.x, v4.y, v4.z);
+                        rlVertex3f(v5.x, v5.y, v5.z);
+                        rlVertex3f(v1.x, v1.y, v1.z);
+                        rlVertex3f(v5.x, v5.y, v5.z);
+                        rlVertex3f(v6.x, v6.y, v6.z);
+                    rlEnd();
+                }
+                
+                // Draw edges in black for definition
+                for (const auto& edge : hexagonEdges) {
+                    DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
+                }
             EndMode3D();
         }
 
