@@ -169,6 +169,7 @@ int main(void)
                     for (const auto& edge : edges) {
                         DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], RED);
                     }
+                    rlEnableBackfaceCulling(); // Re-enable backface culling
                 EndMode3D();
             } else if (currentScene == PLACEHOLDER) {
                 // Placeholder scene - tesseract with white lines
@@ -187,6 +188,7 @@ int main(void)
                 // Colored faces scene
                 ClearBackground(BLACK);
                 BeginMode3D(camera);
+                    rlDisableBackfaceCulling(); // Disable backface culling
                     // Project tesseract
                     auto projectedVertices = projectTesseract(tesseractVertices, 
                         angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
