@@ -238,10 +238,23 @@ int main(void)
                 EndMode3D();
             }
 
-            // Draw current rotation axis (centered)
+            // Draw current rotation axis and info text (centered)
             const char* axisText = TextFormat("Rotation Axis: %s", axisNames[currentAxis]);
-            int textWidth = MeasureText(axisText, 30);
-            DrawText(axisText, (screenWidth - textWidth)/2, 40, 30, LIGHTGRAY);
+            int axisWidth = MeasureText(axisText, 30);
+            DrawText(axisText, (screenWidth - axisWidth)/2, 40, 30, LIGHTGRAY);
+            
+            const char* titleText = "4D Tesseract";
+            int titleWidth = MeasureText(titleText, 30);
+            DrawText(titleText, (screenWidth - titleWidth)/2, 80, 30, LIGHTGRAY);
+            
+            const char* projectionText = "(3D Projection)";
+            int projectionWidth = MeasureText(projectionText, 30);
+            DrawText(projectionText, (screenWidth - projectionWidth)/2, 120, 30, LIGHTGRAY);
+            
+            const char* creditText = "Vibe Coded With Deepseek";
+            int creditWidth = MeasureText(creditText, 30);
+            DrawText(creditText, (screenWidth - creditWidth)/2, 160, 30, LIGHTGRAY);
+            
             DrawFPS(10, 10);
         EndDrawing();
     }
