@@ -106,8 +106,17 @@ int main(void)
         (Color){255, 255, 255, 255}    // White
     };
 
-    // Rotation angle for 4D (only XW axis)
+    // Rotation angles for 4D
+    float angleXY = 0.0f;
+    float angleXZ = 0.0f;
     float angleXW = 0.0f;
+    float angleYZ = 0.0f;
+    float angleYW = 0.0f;
+    float angleZW = 0.0f;
+
+    // Current rotation axis index
+    int currentAxis = 2; // Start with XW
+    const char* axisNames[6] = {"XY", "XZ", "XW", "YZ", "YW", "ZW"};
 
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
@@ -128,8 +137,23 @@ int main(void)
             camera.position = Vector3Subtract(camera.position, Vector3Scale(Vector3Normalize(camera.position), 0.1f));
         }
 
-        // Update rotation angle (only XW axis)
-        angleXW += 0.02f;
+        // Handle axis cycling
+        if (IsKeyPressed(KEY_RIGHT)) {
+            currentAxis = (currentAxis + 1) % 6;
+        }
+        if (IsKeyPressed(KEY_LEFT)) {
+            currentAxis = (currentAxis + 5) % 6; // Equivalent to -1 but wraps correctly
+        }
+
+        // Update rotation angle for current axis
+        switch (currentAxis) {
+            case 0: angleXY += 0.02f; break;
+            case 1: angleXZ += 0.02f; break;
+            case 2: angleXW += 0.02f; break;
+            case 3: angleYZ += 0.02f; break;
+            case 4: angleYW += 0.02f; break;
+            case 5: angleZW += 0.02f; break;
+        }
 
         // Draw
         BeginDrawing();
@@ -139,7 +163,7 @@ int main(void)
                 BeginMode3D(camera);
                     // Project and draw tesseract
                     auto projectedVertices = projectTesseract(tesseractVertices, 
-                        0.0f, 0.0f, angleXW, 0.0f, 0.0f, 0.0f);
+                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
                     
                     // Draw edges in red
                     for (const auto& edge : edges) {
@@ -152,7 +176,7 @@ int main(void)
                 BeginMode3D(camera);
                     // Project and draw tesseract
                     auto projectedVertices = projectTesseract(tesseractVertices, 
-                        0.0f, 0.0f, angleXW, 0.0f, 0.0f, 0.0f);
+                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
                     
                     // Draw edges in white
                     for (const auto& edge : edges) {
@@ -165,7 +189,7 @@ int main(void)
                 BeginMode3D(camera);
                     // Project tesseract
                     auto projectedVertices = projectTesseract(tesseractVertices, 
-                        0.0f, 0.0f, angleXW, 0.0f, 0.0f, 0.0f);
+                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
                     
                     // Define all 24 square faces of the tesseract
                     int faces[24][4] = {
@@ -212,6 +236,8 @@ int main(void)
                 EndMode3D();
             }
 
+            // Draw current rotation axis
+            DrawText(TextFormat("Rotation Axis: %s", axisNames[currentAxis]), 10, 40, 20, LIGHTGRAY);
             DrawFPS(10, 10);
         EndDrawing();
     }
