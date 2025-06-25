@@ -133,7 +133,7 @@ int main(void)
     {
         // Update
         if (IsKeyPressed(KEY_SPACE)) {
-            currentScene = static_cast<Scene>((currentScene + 1) % 3);
+            currentScene = static_cast<Scene>((currentScene + 1) % 6);
         }
 
         // Handle zoom
