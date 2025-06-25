@@ -238,8 +238,10 @@ int main(void)
                 EndMode3D();
             }
 
-            // Draw current rotation axis
-            DrawText(TextFormat("Rotation Axis: %s", axisNames[currentAxis]), 10, 40, 20, LIGHTGRAY);
+            // Draw current rotation axis (centered)
+            const char* axisText = TextFormat("Rotation Axis: %s", axisNames[currentAxis]);
+            int textWidth = MeasureText(axisText, 20);
+            DrawText(axisText, (screenWidth - textWidth)/2, 40, 20, LIGHTGRAY);
             DrawFPS(10, 10);
         EndDrawing();
     }
