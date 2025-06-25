@@ -2,8 +2,6 @@
 
 A real-time visualization of 4D shapes (tesseract, pyramid, pentagon, hexagon) projected into 3D space using raylib.
 
-![Screenshot](screenshot.png) *Example visualization*
-
 ## Features
 - Interactive 4D tesseract with rotation controls
 - Multiple visualization modes (wireframe, colored faces)
