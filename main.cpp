@@ -221,6 +221,7 @@ int main(void)
                         {2, 6, 14, 10}, {3, 7, 15, 11}
                     };
 
+
                     // Define 4D pyramid vertices
                     std::vector<std::vector<float>> pyramidVertices = {
                         {0, 0, 0, 0},    // Apex
