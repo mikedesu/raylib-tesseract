@@ -3,6 +3,44 @@
 #include <vector>
 #include <cmath>
 
+// Function to project 4D vertices to 3D
+std::vector<Vector3> projectTesseract(const std::vector<std::vector<float>>& vertices, 
+                                    float xy, float xz, float xw, 
+                                    float yz, float yw, float zw) {
+    std::vector<Vector3> projected;
+    for (const auto& vertex : vertices) {
+        // Apply 4D rotations
+        float x = vertex[0];
+        float y = vertex[1];
+        float z = vertex[2];
+        float w = vertex[3];
+        
+        // Rotate in 4D space
+        float x1 = x * cos(xy) - y * sin(xy);
+        float y1 = x * sin(xy) + y * cos(xy);
+        float z1 = z * cos(xz) - x1 * sin(xz);
+        float x2 = x1 * cos(xz) + z * sin(xz);
+        float w1 = w * cos(xw) - x2 * sin(xw);
+        float x3 = x2 * cos(xw) + w * sin(xw);
+        float y2 = y1 * cos(yz) - z1 * sin(yz);
+        float z2 = y1 * sin(yz) + z1 * cos(yz);
+        float w2 = w1 * cos(yw) - y2 * sin(yw);
+        float y3 = y2 * cos(yw) + w1 * sin(yw);
+        float z3 = z2 * cos(zw) - w2 * sin(zw);
+        float w3 = z2 * sin(zw) + w2 * cos(zw);
+
+        // Project to 3D (perspective projection)
+        float scale = 2.0f / (4.0f + w3);
+        Vector3 proj = {
+            x3 * scale,
+            y3 * scale,
+            z3 * scale
+        };
+        projected.push_back(proj);
+    }
+    return projected;
+}
+
 int main(void)
 {
     // Initialization
@@ -47,43 +85,6 @@ int main(void)
     float angleYW = 0.0f;
     float angleZW = 0.0f;
 
-    // Function to project 4D vertices to 3D
-    std::vector<Vector3> projectTesseract(const std::vector<std::vector<float>>& vertices, 
-                                        float xy, float xz, float xw, 
-                                        float yz, float yw, float zw) {
-        std::vector<Vector3> projected;
-        for (const auto& vertex : vertices) {
-            // Apply 4D rotations
-            float x = vertex[0];
-            float y = vertex[1];
-            float z = vertex[2];
-            float w = vertex[3];
-            
-            // Rotate in 4D space
-            float x1 = x * cos(xy) - y * sin(xy);
-            float y1 = x * sin(xy) + y * cos(xy);
-            float z1 = z * cos(xz) - x1 * sin(xz);
-            float x2 = x1 * cos(xz) + z * sin(xz);
-            float w1 = w * cos(xw) - x2 * sin(xw);
-            float x3 = x2 * cos(xw) + w * sin(xw);
-            float y2 = y1 * cos(yz) - z1 * sin(yz);
-            float z2 = y1 * sin(yz) + z1 * cos(yz);
-            float w2 = w1 * cos(yw) - y2 * sin(yw);
-            float y3 = y2 * cos(yw) + w1 * sin(yw);
-            float z3 = z2 * cos(zw) - w2 * sin(zw);
-            float w3 = z2 * sin(zw) + w2 * cos(zw);
-
-            // Project to 3D (perspective projection)
-            float scale = 2.0f / (4.0f + w3);
-            Vector3 proj = {
-                x3 * scale,
-                y3 * scale,
-                z3 * scale
-            };
-            projected.push_back(proj);
-        }
-        return projected;
-    }
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
 
