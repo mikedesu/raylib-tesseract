@@ -78,11 +78,32 @@ int main(void)
     enum Scene { TESSERACT, PLACEHOLDER, COLORED_FACES };
     Scene currentScene = TESSERACT;
 
-    // Colors for tesseract faces (24 colors)
+    // Colors for tesseract faces (24 unique colors)
     const Color faceColors[24] = {
-        RED, GREEN, BLUE, YELLOW, ORANGE, PURPLE, SKYBLUE, PINK,
-        LIME, GOLD, VIOLET, BROWN, BEIGE, MAGENTA, MAROON, DARKGREEN,
-        DARKBLUE, DARKPURPLE, DARKBROWN, DARKGRAY, LIGHTGRAY, RAYWHITE, GRAY, WHITE
+        (Color){255, 0, 0, 255},       // Red
+        (Color){0, 255, 0, 255},      // Green
+        (Color){0, 0, 255, 255},      // Blue
+        (Color){255, 255, 0, 255},     // Yellow
+        (Color){255, 165, 0, 255},     // Orange
+        (Color){128, 0, 128, 255},     // Purple
+        (Color){0, 191, 255, 255},    // Sky Blue
+        (Color){255, 192, 203, 255},  // Pink
+        (Color){50, 205, 50, 255},     // Lime Green
+        (Color){255, 215, 0, 255},     // Gold
+        (Color){138, 43, 226, 255},    // Violet
+        (Color){165, 42, 42, 255},     // Brown
+        (Color){245, 245, 220, 255},   // Beige
+        (Color){255, 0, 255, 255},     // Magenta
+        (Color){128, 0, 0, 255},       // Maroon
+        (Color){0, 100, 0, 255},       // Dark Green
+        (Color){0, 0, 139, 255},       // Dark Blue
+        (Color){139, 0, 139, 255},     // Dark Purple
+        (Color){101, 67, 33, 255},     // Dark Brown
+        (Color){169, 169, 169, 255},   // Dark Gray
+        (Color){211, 211, 211, 255},   // Light Gray
+        (Color){245, 245, 245, 255},    // Almost White
+        (Color){128, 128, 128, 255},   // Gray
+        (Color){255, 255, 255, 255}    // White
     };
 
     // Rotation angle for 4D (only XW axis)
