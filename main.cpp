@@ -85,13 +85,8 @@ int main(void)
         DARKBLUE, DARKPURPLE, DARKBROWN, DARKGRAY, LIGHTGRAY, RAYWHITE, GRAY, WHITE
     };
 
-    // Rotation angles for 4D
-    float angleXY = 0.0f;
-    float angleXZ = 0.0f;
+    // Rotation angle for 4D (only XW axis)
     float angleXW = 0.0f;
-    float angleYZ = 0.0f;
-    float angleYW = 0.0f;
-    float angleZW = 0.0f;
 
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
@@ -112,13 +107,8 @@ int main(void)
             camera.position = Vector3Subtract(camera.position, Vector3Scale(Vector3Normalize(camera.position), 0.1f));
         }
 
-        // Update rotation angles regardless of scene
-        angleXY += 0.01f;
-        angleXZ += 0.02f;
-        angleXW += 0.03f;
-        angleYZ += 0.015f;
-        angleYW += 0.025f;
-        angleZW += 0.035f;
+        // Update rotation angle (only XW axis)
+        angleXW += 0.02f;
 
         // Draw
         BeginDrawing();
@@ -128,7 +118,7 @@ int main(void)
                 BeginMode3D(camera);
                     // Project and draw tesseract
                     auto projectedVertices = projectTesseract(tesseractVertices, 
-                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+                        0.0f, 0.0f, angleXW, 0.0f, 0.0f, 0.0f);
                     
                     // Draw edges in red
                     for (const auto& edge : edges) {
@@ -141,7 +131,7 @@ int main(void)
                 BeginMode3D(camera);
                     // Project and draw tesseract
                     auto projectedVertices = projectTesseract(tesseractVertices, 
-                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+                        0.0f, 0.0f, angleXW, 0.0f, 0.0f, 0.0f);
                     
                     // Draw edges in white
                     for (const auto& edge : edges) {
@@ -154,7 +144,7 @@ int main(void)
                 BeginMode3D(camera);
                     // Project tesseract
                     auto projectedVertices = projectTesseract(tesseractVertices, 
-                        angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+                        0.0f, 0.0f, angleXW, 0.0f, 0.0f, 0.0f);
                     
                     // Define all 24 square faces of the tesseract
                     int faces[24][4] = {
