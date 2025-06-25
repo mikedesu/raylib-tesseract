@@ -240,8 +240,8 @@ int main(void)
 
             // Draw current rotation axis (centered)
             const char* axisText = TextFormat("Rotation Axis: %s", axisNames[currentAxis]);
-            int textWidth = MeasureText(axisText, 20);
-            DrawText(axisText, (screenWidth - textWidth)/2, 40, 20, LIGHTGRAY);
+            int textWidth = MeasureText(axisText, 30);
+            DrawText(axisText, (screenWidth - textWidth)/2, 40, 30, LIGHTGRAY);
             DrawFPS(10, 10);
         EndDrawing();
     }
