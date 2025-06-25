@@ -218,40 +218,68 @@ int main(void) {
 
         // Define 4D pentagon vertices
         std::vector<std::vector<float>> pentagonVertices = {
-            {0, 0, 0, 0},    // Center
-            {1, 0, 0, 1},    // Vertex 1
+            {0, 0, 0, 0}, // Center
+            {1, 0, 0, 1}, // Vertex 1
             {0.309, 0.951, 0, 1}, // Vertex 2
             {-0.809, 0.588, 0, 1}, // Vertex 3
             {-0.809, -0.588, 0, 1}, // Vertex 4
             {0.309, -0.951, 0, 1}, // Vertex 5
-            {1, 0, 0, -1},   // Vertex 6
+            {1, 0, 0, -1}, // Vertex 6
             {0.309, 0.951, 0, -1}, // Vertex 7
             {-0.809, 0.588, 0, -1}, // Vertex 8
             {-0.809, -0.588, 0, -1}, // Vertex 9
-            {0.309, -0.951, 0, -1}  // Vertex 10
+            {0.309, -0.951, 0, -1} // Vertex 10
         };
 
         // Define pentagon edges
-        std::vector<std::pair<int, int>> pentagonEdges = {
-            // Bottom pentagon
-            {0,1}, {0,2}, {0,3}, {0,4}, {0,5},
-            {1,2}, {2,3}, {3,4}, {4,5}, {5,1},
-            // Top pentagon
-            {0,6}, {0,7}, {0,8}, {0,9}, {0,10},
-            {6,7}, {7,8}, {8,9}, {9,10}, {10,6},
-            // Connecting edges
-            {1,6}, {2,7}, {3,8}, {4,9}, {5,10}
-        };
+        std::vector<std::pair<int, int>> pentagonEdges = {// Bottom pentagon
+                                                          {0, 1},
+                                                          {0, 2},
+                                                          {0, 3},
+                                                          {0, 4},
+                                                          {0, 5},
+                                                          {1, 2},
+                                                          {2, 3},
+                                                          {3, 4},
+                                                          {4, 5},
+                                                          {5, 1},
+                                                          // Top pentagon
+                                                          {0, 6},
+                                                          {0, 7},
+                                                          {0, 8},
+                                                          {0, 9},
+                                                          {0, 10},
+                                                          {6, 7},
+                                                          {7, 8},
+                                                          {8, 9},
+                                                          {9, 10},
+                                                          {10, 6},
+                                                          // Connecting edges
+                                                          {1, 6},
+                                                          {2, 7},
+                                                          {3, 8},
+                                                          {4, 9},
+                                                          {5, 10}};
 
         // Define pentagon faces
-        int pentagonFaces[12][5] = {
-            // Bottom faces
-            {0,1,2,2,2}, {0,2,3,3,3}, {0,3,4,4,4}, {0,4,5,5,5}, {0,5,1,1,1},
-            // Top faces
-            {0,6,7,7,7}, {0,7,8,8,8}, {0,8,9,9,9}, {0,9,10,10,10}, {0,10,6,6,6},
-            // Side faces
-            {1,2,7,6,6}, {2,3,8,7,7}, {3,4,9,8,8}, {4,5,10,9,9}, {5,1,6,10,10}
-        };
+        int pentagonFaces[15][5] = {// Bottom faces
+                                    {0, 1, 2, 2, 2},
+                                    {0, 2, 3, 3, 3},
+                                    {0, 3, 4, 4, 4},
+                                    {0, 4, 5, 5, 5},
+                                    {0, 5, 1, 1, 1},
+                                    // Top faces
+                                    {0, 6, 7, 7, 7},
+                                    {0, 7, 8, 8, 8},
+                                    {0, 8, 9, 9, 9},
+                                    {0, 9, 10, 10, 10},
+                                    {0, 10, 6, 6, 6},
+                                    // Side faces
+                                    {1, 2, 7, 6, 6},
+                                    {2, 3, 8, 7, 7},
+                                    {3, 4, 9, 8, 8},
+                                    {4, 5, 10, 9, 9},
+                                    {5, 1, 6, 10, 10}};
 
         // Draw
         BeginDrawing();
@@ -403,61 +431,61 @@ int main(void) {
         } else if (currentScene == PENTAGON_BLACK_LINES) {
             ClearBackground(RAYWHITE);
             BeginMode3D(camera);
-                // Project and draw pentagon
-                auto projectedVertices = 
-                    projectTesseract(pentagonVertices, angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
-                
-                // Draw edges in black
-                for (const auto& edge : pentagonEdges) {
-                    DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
-                }
+            // Project and draw pentagon
+            auto projectedVertices =
+                projectTesseract(pentagonVertices, angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+
+            // Draw edges in black
+            for (const auto& edge : pentagonEdges) {
+                DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
+            }
             EndMode3D();
         } else if (currentScene == PENTAGON_WHITE_LINES) {
             ClearBackground(BLACK);
             BeginMode3D(camera);
-                // Project and draw pentagon
-                auto projectedVertices = 
-                    projectTesseract(pentagonVertices, angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
-                
-                // Draw edges in white
-                for (const auto& edge : pentagonEdges) {
-                    DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], WHITE);
-                }
+            // Project and draw pentagon
+            auto projectedVertices =
+                projectTesseract(pentagonVertices, angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+
+            // Draw edges in white
+            for (const auto& edge : pentagonEdges) {
+                DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], WHITE);
+            }
             EndMode3D();
         } else if (currentScene == PENTAGON_COLORED_FACES) {
             ClearBackground(BLACK);
             BeginMode3D(camera);
-                rlDisableBackfaceCulling();
-                // Project pentagon
-                auto projectedVertices = 
-                    projectTesseract(pentagonVertices, angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
-                
-                // Draw each face with a different color
-                for (int i = 0; i < 12; i++) {
-                    Vector3 v1 = projectedVertices[pentagonFaces[i][0]];
-                    Vector3 v2 = projectedVertices[pentagonFaces[i][1]];
-                    Vector3 v3 = projectedVertices[pentagonFaces[i][2]];
-                    Vector3 v4 = projectedVertices[pentagonFaces[i][3]];
-                    Vector3 v5 = projectedVertices[pentagonFaces[i][4]];
-                    
-                    rlBegin(RL_TRIANGLES);
-                        rlColor4ub(faceColors[i].r, faceColors[i].g, faceColors[i].b, faceColors[i].a);
-                        rlVertex3f(v1.x, v1.y, v1.z);
-                        rlVertex3f(v2.x, v2.y, v2.z);
-                        rlVertex3f(v3.x, v3.y, v3.z);
-                        rlVertex3f(v1.x, v1.y, v1.z);
-                        rlVertex3f(v3.x, v3.y, v3.z);
-                        rlVertex3f(v4.x, v4.y, v4.z);
-                        rlVertex3f(v1.x, v1.y, v1.z);
-                        rlVertex3f(v4.x, v4.y, v4.z);
-                        rlVertex3f(v5.x, v5.y, v5.z);
-                    rlEnd();
-                }
-                
-                // Draw edges in black for definition
-                for (const auto& edge : pentagonEdges) {
-                    DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
-                }
+            rlDisableBackfaceCulling();
+            // Project pentagon
+            auto projectedVertices =
+                projectTesseract(pentagonVertices, angleXY, angleXZ, angleXW, angleYZ, angleYW, angleZW);
+
+            // Draw each face with a different color
+            for (int i = 0; i < 12; i++) {
+                Vector3 v1 = projectedVertices[pentagonFaces[i][0]];
+                Vector3 v2 = projectedVertices[pentagonFaces[i][1]];
+                Vector3 v3 = projectedVertices[pentagonFaces[i][2]];
+                Vector3 v4 = projectedVertices[pentagonFaces[i][3]];
+                Vector3 v5 = projectedVertices[pentagonFaces[i][4]];
+
+                rlBegin(RL_TRIANGLES);
+                rlColor4ub(faceColors[i].r, faceColors[i].g, faceColors[i].b, faceColors[i].a);
+                rlVertex3f(v1.x, v1.y, v1.z);
+                rlVertex3f(v2.x, v2.y, v2.z);
+                rlVertex3f(v3.x, v3.y, v3.z);
+                rlVertex3f(v1.x, v1.y, v1.z);
+                rlVertex3f(v3.x, v3.y, v3.z);
+                rlVertex3f(v4.x, v4.y, v4.z);
+                rlVertex3f(v1.x, v1.y, v1.z);
+                rlVertex3f(v4.x, v4.y, v4.z);
+                rlVertex3f(v5.x, v5.y, v5.z);
+                rlEnd();
+            }
+
+            // Draw edges in black for definition
+            for (const auto& edge : pentagonEdges) {
+                DrawLine3D(projectedVertices[edge.first], projectedVertices[edge.second], BLACK);
+            }
             EndMode3D();
         }
 
